@@ -27,7 +27,10 @@ void Robot::RobotInit() {
  * <p> This runs after the mode specific periodic functions, but before
  * LiveWindow and SmartDashboard integrated updating.
  */
-void Robot::RobotPeriodic() {}
+void Robot::RobotPeriodic() {
+  frc::SmartDashboard::PutNumber("x", stick->GetX());
+  frc::SmartDashboard::PutNumber("y ", stick->GetX());
+}
 
 /**
  * This autonomous (along with the chooser code above) shows how to select
@@ -41,24 +44,30 @@ void Robot::RobotPeriodic() {}
  * make sure to add them to the chooser code above as well.
  */
 void Robot::AutonomousInit() {
-  m_autoSelected = m_chooser.GetSelected();
-  // m_autoSelected = SmartDashboard::GetString("Auto Selector",
-  //     kAutoNameDefault);
-  std::cout << "Auto selected: " << m_autoSelected << std::endl;
+   m_leftLeadMotor->GetEncoder().SetPosition(0);
+   m_rightLeadMotor->GetEncoder().SetPosition(0);
 
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-  } else {
-    // Default Auto goes here
-  }
 }
 
 void Robot::AutonomousPeriodic() {
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-  } else {
-    // Default Auto goes here
-  }
+  //Encoder PID Stuff 
+ 
+  //What do I put here, im not sure about any of these values
+   double m_P = 10;
+   double m_I = 10;
+   double m_D = 5;
+   double ticksPerRevolution = 42;
+   double wheelCircumference = 15;
+   
+   //(diameter inches)
+   double distanceCoveredPerRev = (wheelCircumference / 2 * M_PI) * 2;
+   
+   //So 5 feet would be (5/distanceCoveredPerRev ) * tickPerRevolution
+  double leftMotorRevs = m_leftLeadMotor->GetEncoder().GetPosition() * ticksPerRevolution;
+  double rightMotorRevs = m_rightLeadMotor->GetEncoder().GetPosition() * ticksPerRevolution;
+
+  //I really dont know what to do with PID and whatnot and how to make it go here
+
 }
 
 void Robot::TeleopInit() {}
@@ -108,11 +117,10 @@ void Robot::TeleopPeriodic() {
     rightMotorOutput=joystickY=joystickX;
       }
   }
+  frc::SmartDashboard::PutNumber("leftMotor", leftMotorOutput);
+  frc::SmartDashboard::PutNumber("rightMotor", rightMotorOutput);
   m_leftLeadMotor->Set(leftMotorOutput);
   m_rightLeadMotor->Set(rightMotorOutput);
-    
-  
-
 }
 
 void Robot::DisabledInit() {}
