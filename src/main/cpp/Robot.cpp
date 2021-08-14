@@ -80,8 +80,11 @@ void Robot::TeleopPeriodic() {
   // double yStick = stick->GetRawAxis(1);
   // double xStick = stick->GetRawAxis(4);
 
-    double joystickX = stick->GetX();
-    double joystickY = stick->GetY();
+    //double joystickX = stick->GetX();
+    //double joystickY = stick->GetY();
+    //Left Y, Right X
+    double joystickX = stick->GetRawAxis(1);
+    double joystickY = stick->GetRawAxis(4);
 
     if (fabs(joystickX) <= deadband)
       joystickX = 0;
@@ -90,6 +93,7 @@ void Robot::TeleopPeriodic() {
 
     //copy sign just copies the sign of the 2nd input
     //copysign(-10, 1) will return 10
+    //hmm?
     double maxSpeed = std::max(std::fabs(joystickX), std::fabs(joystickY));
     if(joystickY < 0) 
       maxSpeed = -maxSpeed;
