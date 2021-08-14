@@ -8,10 +8,15 @@
 
 #include <frc/smartdashboard/SmartDashboard.h>
 
+#include <math.h>
 void Robot::RobotInit() {
-  m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
-  m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
-  frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+    //I kind of forgot why we invert here, i'm just doing it in case
+    m_leftLeadMotor->SetInverted(true);
+    m_leftFollowMotor->Follow(*m_leftLeadMotor, false);
+    m_rightLeadMotor->SetInverted(false);
+    m_rightFollowMotor->Follow(*m_rightLeadMotor, false);
+
+
 }
 
 /**
@@ -58,7 +63,57 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {}
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  double leftMotorOutput;
+  double rightMotorOutput;
+
+  //Are the numbers correct and does it return -128 to 128 kind of cofnused
+  // double yStick = stick->GetRawAxis(1);
+  // double xStick = stick->GetRawAxis(4);
+
+    double joystickX = stick->GetX();
+    double joystickY = stick->GetY();
+
+    if (fabs(joystickX) <= deadband)
+      joystickX = 0;
+    if (fabs(joystickY) <= deadband)
+      joystickY = 0;
+
+    //copy sign just copies the sign of the 2nd input
+    //copysign(-10, 1) will return 10
+    double maxSpeed = std::max(std::fabs(joystickX), std::fabs(joystickY));
+    if(joystickY < 0) 
+      maxSpeed = -maxSpeed;
+    
+  if(joystickY >= 0.0) {
+      if(joystickX >= 0) {
+      //1st quadrant
+      leftMotorOutput=maxSpeed;
+      rightMotorOutput=joystickY-joystickX;
+      } else {
+      //2nd quadrant
+      leftMotorOutput=joystickY+joystickX;
+      rightMotorOutput=maxSpeed;
+      }
+  }
+  else
+  {
+    if(joystickX >= 0) {
+    //3rd quadrant
+    leftMotorOutput=joystickX+joystickY;
+    rightMotorOutput=maxSpeed;
+      } else {
+    //4th quadrant
+    leftMotorOutput=maxSpeed;
+    rightMotorOutput=joystickY=joystickX;
+      }
+  }
+  m_leftLeadMotor->Set(leftMotorOutput);
+  m_rightLeadMotor->Set(rightMotorOutput);
+    
+  
+
+}
 
 void Robot::DisabledInit() {}
 

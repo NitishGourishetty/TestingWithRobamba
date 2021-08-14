@@ -6,11 +6,23 @@
 
 #include <string>
 
+#include "rev/CANSparkMax.h"
 #include <frc/TimedRobot.h>
 #include <frc/smartdashboard/SendableChooser.h>
+#include <frc/Joystick.h>
+#include <frc/DriverStation.h>
 
 class Robot : public frc::TimedRobot {
  public:
+  rev::CANSparkMax * m_leftLeadMotor = new rev::CANSparkMax(1, rev::CANSparkMax::MotorType::kBrushless);
+  rev::CANSparkMax * m_rightLeadMotor = new rev::CANSparkMax(2, rev::CANSparkMax::MotorType::kBrushless);
+  rev::CANSparkMax * m_leftFollowMotor = new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless);
+  rev::CANSparkMax * m_rightFollowMotor = new rev::CANSparkMax(4, rev::CANSparkMax::MotorType::kBrushless);
+
+  frc::Joystick *stick = new frc::Joystick(0);
+
+  double deadband = 0.05;
+
   void RobotInit() override;
   void RobotPeriodic() override;
   void AutonomousInit() override;
