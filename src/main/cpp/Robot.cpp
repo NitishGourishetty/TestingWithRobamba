@@ -3,12 +3,10 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "Robot.h"
-
 #include <iostream>
-
 #include <frc/smartdashboard/SmartDashboard.h>
-
 #include <math.h>
+
 void Robot::RobotInit() {
     //I kind of forgot why we invert here, i'm just doing it in case
     m_leftLeadMotor->SetInverted(true);
@@ -16,7 +14,10 @@ void Robot::RobotInit() {
     m_rightLeadMotor->SetInverted(false);
     m_rightFollowMotor->Follow(*m_rightLeadMotor, false);
 
-
+    m_leftLeadMotor->RestoreFactoryDefaults();
+    m_rightLeadMotor->RestoreFactoryDefaults();
+    m_leftFollowMotor->RestoreFactoryDefaults();
+    m_rightFollowMotor->RestoreFactoryDefaults();
 }
 
 /**
@@ -83,8 +84,8 @@ void Robot::TeleopPeriodic() {
     //double joystickX = stick->GetX();
     //double joystickY = stick->GetY();
     //Left Y, Right X
-    double joystickX = stick->GetRawAxis(1);
-    double joystickY = stick->GetRawAxis(4);
+    double joystickY = stick->GetRawAxis(1);
+    double joystickX = stick->GetRawAxis(4) * -1.0;
 
     if (fabs(joystickX) <= deadband)
       joystickX = 0;
@@ -94,10 +95,10 @@ void Robot::TeleopPeriodic() {
     //copy sign just copies the sign of the 2nd input
     //copysign(-10, 1) will return 10
     //hmm?
-    double maxSpeed = std::max(std::fabs(joystickX), std::fabs(joystickY));
-    if(joystickY < 0) 
-      maxSpeed = -maxSpeed;
-    
+    // double maxSpeed = std::max(std::fabs(joystickX), std::fabs(joystickY));
+    // if(joystickY < 0) 
+    //   maxSpeed = -maxSpeed;
+  /*
   if(joystickY >= 0.0) {
       if(joystickX >= 0) {
       //1st quadrant
@@ -118,13 +119,32 @@ void Robot::TeleopPeriodic() {
       } else {
     //4th quadrant
     leftMotorOutput=maxSpeed;
-    rightMotorOutput=joystickY=joystickX;
+    rightMotorOutput=joystickY-joystickX;
       }
   }
+  */
+
+
+  //Not working right now-figure out later
+  leftMotorOutput = joystickX + joystickY;
+  rightMotorOutput = joystickX - joystickY;
+
   frc::SmartDashboard::PutNumber("leftMotor", leftMotorOutput);
   frc::SmartDashboard::PutNumber("rightMotor", rightMotorOutput);
+  
+  double leftAbs = std::abs(leftMotorOutput);
+  double rightAbs = std::abs(leftMotorOutput);
+  
+  leftMotorOutput = (1/(1-deadband)) * leftAbs - (deadband/(1/deadband));
+  
+  rightMotorOutput = (1/(1-deadband)) * rightAbs - (deadband/(1/deadband));
+  leftMotorOutput = std::copysign(leftMotorOutput*leftMotorOutput ,leftMotorOutput);
+  rightMotorOutput = std::copysign(rightMotorOutput*rightMotorOutput ,rightMotorOutput);
+  
+  //deadband type stuff yk yk
+  
   m_leftLeadMotor->Set(leftMotorOutput);
-  m_rightLeadMotor->Set(rightMotorOutput);
+  m_rightLeadMotor->Set(rightMotorOutput * -1.0);
 }
 
 void Robot::DisabledInit() {}
