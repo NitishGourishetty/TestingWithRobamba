@@ -33,6 +33,14 @@ void Robot::RobotPeriodic() {
   frc::SmartDashboard::PutNumber("y ", stick->GetX());
 }
 
+double convertDistanceToTicks (double inches) {
+  double radius = 3;
+  double ticksPerRevolution = 42;
+  double wheelCircumference = 15*2*M_PI*radius;
+  return (inches/wheelCircumference) * ticksPerRevolution;
+}
+
+
 /**
  * This autonomous (along with the chooser code above) shows how to select
  * between different autonomous modes using the dashboard. The sendable chooser
@@ -54,22 +62,28 @@ void Robot::AutonomousPeriodic() {
   //Encoder PID Stuff 
  
   //What do I put here, im not sure about any of these values
-   double m_P = 10;
-   double m_I = 10;
-   double m_D = 5;
-   double ticksPerRevolution = 42;
-   double wheelCircumference = 15;
+  double m_P = 10;
+  double m_I = 10;
+  double m_D = 5;
+  double ticksPerRevolution = 42;
+  double wheelCircumference = 15;
    
-   //(diameter inches)
-   double distanceCoveredPerRev = (wheelCircumference / 2 * M_PI) * 2;
+   //(inches is distance)
+  double ticksNeeded = convertDistanceToTicks(36);
    
    //So 5 feet would be (5/distanceCoveredPerRev ) * tickPerRevolution
   double leftMotorRevs = m_leftLeadMotor->GetEncoder().GetPosition() * ticksPerRevolution;
   double rightMotorRevs = m_rightLeadMotor->GetEncoder().GetPosition() * ticksPerRevolution;
 
+  //which do you check, it shouldn't matter
+  if(leftMotorRevs < ticksPerRevolution) {
+      m_leftLeadMotor->Set(0.5);
+      m_leftLeadMotor->Set(0.5);
+    }
+  }
+
   //I really dont know what to do with PID and whatnot and how to make it go here
 
-}
 
 void Robot::TeleopInit() {}
 
@@ -126,6 +140,7 @@ void Robot::TeleopPeriodic() {
 
 
   //Not working right now-figure out later
+  //AFJOBWFIOFIFIFIFIFIFIFBIFIFOBIBFBFBBFB
   leftMotorOutput = joystickX + joystickY;
   rightMotorOutput = joystickX - joystickY;
 
