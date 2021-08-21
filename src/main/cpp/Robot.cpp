@@ -76,9 +76,9 @@ void Robot::AutonomousPeriodic() {
   double rightMotorRevs = m_rightLeadMotor->GetEncoder().GetPosition() * ticksPerRevolution;
 
   //which do you check, it shouldn't matter
-  if(leftMotorRevs < ticksPerRevolution) {
+  if(leftMotorRevs < 100) {
       m_leftLeadMotor->Set(0.5);
-      m_leftLeadMotor->Set(0.5);
+      m_rightLeadMotor->Set(0.5);
     }
   }
 
@@ -109,57 +109,67 @@ void Robot::TeleopPeriodic() {
     //copy sign just copies the sign of the 2nd input
     //copysign(-10, 1) will return 10
     //hmm?
-    // double maxSpeed = std::max(std::fabs(joystickX), std::fabs(joystickY));
-    // if(joystickY < 0) 
-    //   maxSpeed = -maxSpeed;
-  /*
-  if(joystickY >= 0.0) {
-      if(joystickX >= 0) {
-      //1st quadrant
-      leftMotorOutput=maxSpeed;
-      rightMotorOutput=joystickY-joystickX;
-      } else {
-      //2nd quadrant
-      leftMotorOutput=joystickY+joystickX;
-      rightMotorOutput=maxSpeed;
-      }
-  }
-  else
-  {
-    if(joystickX >= 0) {
-    //3rd quadrant
-    leftMotorOutput=joystickX+joystickY;
-    rightMotorOutput=maxSpeed;
-      } else {
-    //4th quadrant
-    leftMotorOutput=maxSpeed;
-    rightMotorOutput=joystickY-joystickX;
-      }
-  }
-  */
+  //    double maxSpeed = std::max(std::fabs(joystickX), std::fabs(joystickY));
+  //    if(joystickY < 0) 
+  //      maxSpeed = -maxSpeed;
+  
+  // if(joystickY >= 0.0) {
+  //     if(joystickX >= 0) {
+  //     //1st quadrant
+  //     leftMotorOutput=maxSpeed;
+  //     rightMotorOutput=joystickY-joystickX;
+  //     } else {
+  //     //2nd quadrant
+  //     leftMotorOutput=joystickY+joystickX;
+  //     rightMotorOutput=maxSpeed;
+  //     }
+  // }
+  // else
+  // {
+  //   if(joystickX >= 0) {
+  //   //3rd quadrant
+  //   leftMotorOutput=joystickX+joystickY;
+  //   rightMotorOutput=maxSpeed;
+  //     } else {
+  //   //4th quadrant
+  //   leftMotorOutput=maxSpeed;
+  //   rightMotorOutput=joystickY-joystickX;
+  //     }
+  // }
+  
 
 
   //Not working right now-figure out later
   //AFJOBWFIOFIFIFIFIFIFIFBIFIFOBIBFBFBBFB
-  leftMotorOutput = joystickX + joystickY;
-  rightMotorOutput = joystickX - joystickY;
+  // leftMotorOutput = joystickX + joystickY;
+  // rightMotorOutput = joystickX - joystickY;
 
   frc::SmartDashboard::PutNumber("leftMotor", leftMotorOutput);
   frc::SmartDashboard::PutNumber("rightMotor", rightMotorOutput);
   
-  double leftAbs = std::abs(leftMotorOutput);
-  double rightAbs = std::abs(leftMotorOutput);
+  double leftAbs = std::abs(joystickX);
+  double rightAbs = std::abs(joystickY);
   
-  leftMotorOutput = (1/(1-deadband)) * leftAbs - (deadband/(1/deadband));
+  // leftMotorOutput = (1/(1-deadband)) * leftAbs - (deadband/(1/deadband));
   
-  rightMotorOutput = (1/(1-deadband)) * rightAbs - (deadband/(1/deadband));
-  leftMotorOutput = std::copysign(leftMotorOutput*leftMotorOutput ,leftMotorOutput);
-  rightMotorOutput = std::copysign(rightMotorOutput*rightMotorOutput ,rightMotorOutput);
+  // rightMotorOutput = (1/(1-deadband)) * rightAbs - (deadband/(1/deadband));
+  // leftMotorOutput = std::copysign(leftMotorOutput*leftMotorOutput ,leftMotorOutput);
+  // rightMotorOutput = std::copysign(rightMotorOutput*rightMotorOutput ,rightMotorOutput);
+  //So it doesnt lose sign
+
+  double afterleftDeadBand = (1/(1-deadband)) * leftAbs - (deadband/(1/deadband));
+  double afterRightDeadBand = (1/(1-deadband)) * rightAbs - (deadband/(1/deadband));
+  joystickX = std::copysign(afterleftDeadBand*afterleftDeadBand ,joystickX);
+  joystickY = std::copysign(afterRightDeadBand*afterRightDeadBand ,joystickY);
+  leftMotorOutput = joystickX + joystickY;
+  rightMotorOutput = joystickY - joystickX;
   
   //deadband type stuff yk yk
   
   m_leftLeadMotor->Set(leftMotorOutput);
   m_rightLeadMotor->Set(rightMotorOutput * -1.0);
+
+  // myDrive.ArcadeDrive(-driveStick.GetY(), driveStick.GetX());, could I just do this???????
 }
 
 void Robot::DisabledInit() {}
