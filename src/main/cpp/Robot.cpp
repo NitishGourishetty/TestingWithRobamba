@@ -44,13 +44,11 @@ void Robot::AutonomousInit() {
   m_rightLeadMotor->GetEncoder().SetPositionConversionFactor((M_PI * 5.7) / 15);
 }
 void Robot::AutonomousPeriodic() {
-  //maybe we can do tick conversion stuff later, if this aint accepted
-  //1 foot
-  int x = 1;
-  if(x==1) {
+    //Stil a bit confused as to what this does
     m_leftLeadMotor->GetPIDController().SetReference(6.0 , rev::ControlType::kPosition);
     m_rightLeadMotor->GetPIDController().SetReference(6.0 , rev::ControlType::kPosition);
-  }
+
+    
   //I really dont know what to do with PID and whatnot and how to make it go here    
 }
 
@@ -78,6 +76,7 @@ void Robot::TeleopPeriodic() {
   joystickX = std::copysign(pow(afterleftDeadBand, 2), joystickX);
   joystickY = std::copysign(pow(afterRightDeadBand, 2), joystickY);
 
+  //To fix turning backwards
   if (joystickY >= 0.0) {
     leftMotorOutput = joystickY + joystickX;
     rightMotorOutput = joystickY - joystickX;
