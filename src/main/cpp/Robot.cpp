@@ -74,6 +74,8 @@ void Robot::TeleopPeriodic() {
   double rightAbs = std::fabs(joystickY);
   
   // scaling
+
+  //reason for the if statements is that if leftAbs is 0 when its under deadband, the input becomes negative, so it fixes it
   if (leftAbs != 0)
     afterLeftDeadband = (1/(1-deadband)) * leftAbs - (deadband/(1/deadband));
   else
