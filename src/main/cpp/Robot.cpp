@@ -8,29 +8,19 @@
 #include <math.h>
 
 void Robot::RobotInit() {
-    //I kind of forgot why we invert here, i'm just doing it in case
-    m_leftLeadMotor->SetInverted(true);
-    m_leftFollowMotor->Follow(*m_leftLeadMotor, false);
-    m_rightLeadMotor->SetInverted(false);
-    m_rightFollowMotor->Follow(*m_rightLeadMotor, false);
+  m_leftLeadMotor->SetInverted(true);
+  m_leftFollowMotor->Follow(*m_leftLeadMotor, false);
+  m_rightLeadMotor->SetInverted(false);
+  m_rightFollowMotor->Follow(*m_rightLeadMotor, false);
 
-    m_leftLeadMotor->RestoreFactoryDefaults();
-    m_rightLeadMotor->RestoreFactoryDefaults();
-    m_leftFollowMotor->RestoreFactoryDefaults();
-    m_rightFollowMotor->RestoreFactoryDefaults();
+  m_leftLeadMotor->RestoreFactoryDefaults();
+  m_rightLeadMotor->RestoreFactoryDefaults();
+  m_leftFollowMotor->RestoreFactoryDefaults();
+  m_rightFollowMotor->RestoreFactoryDefaults();
 }
-
-/**
- * This function is called every robot packet, no matter the mode. Use
- * this for items like diagnostics that you want ran during disabled,
- * autonomous, teleoperated and test.
- *
- * <p> This runs after the mode specific periodic functions, but before
- * LiveWindow and SmartDashboard integrated updating.
- */
 void Robot::RobotPeriodic() {
-  frc::SmartDashboard::PutNumber("x", stick->GetX());
-  frc::SmartDashboard::PutNumber("y ", stick->GetX());
+  frc::SmartDashboard::PutNumber("x", stick->GetRawAxis(4));
+  frc::SmartDashboard::PutNumber("y ", -stick->GetRawAxis(1));
 }
 
 double convertDistanceToTicks (double inches) {
@@ -55,38 +45,34 @@ double convertDistanceToTicks (double inches) {
 
 //Rev robotics spark max examples
 void Robot::AutonomousInit() {
-    m_rightLeadMotor->Follow(*m_rightLeadMotor, false);
-    m_leftLeadMotor->Follow(*m_leftLeadMotor, false);
-    //Max and min here
-    double m_P = 0.1, m_I = 1e-4, m_D = 1, kMaxOutput = 0.5, kMinOutput = -0.5;
-    //controls error and stuff ykyk
-    //didn't dereference, just global variables
-    m_leftLeadMotor->GetPIDController().SetP(m_P);
-    m_leftLeadMotor->GetPIDController().SetI(m_I);
-    m_leftLeadMotor->GetPIDController().SetD(m_D);
-    m_leftLeadMotor->GetPIDController().SetOutputRange(kMinOutput, kMaxOutput);
+  m_rightLeadMotor->Follow(*m_rightLeadMotor, false);
+  m_leftLeadMotor->Follow(*m_leftLeadMotor, false);
+  //Max and min here
+  double m_P = 0.1, m_I = 1e-4, m_D = 1, kMaxOutput = 0.5, kMinOutput = -0.5;
+  //controls error and stuff ykyk
+  //didn't dereference, just global variables
+  m_leftLeadMotor->GetPIDController().SetP(m_P);
+  m_leftLeadMotor->GetPIDController().SetI(m_I);
+  m_leftLeadMotor->GetPIDController().SetD(m_D);
+  m_leftLeadMotor->GetPIDController().SetOutputRange(kMinOutput, kMaxOutput);
 
-    m_rightLeadMotor->GetPIDController().SetP(m_P);
-    m_rightLeadMotor->GetPIDController().SetI(m_I);
-    m_rightLeadMotor->GetPIDController().SetD(m_D);
-    m_rightLeadMotor->GetPIDController().SetOutputRange(kMinOutput, kMaxOutput);
+  m_rightLeadMotor->GetPIDController().SetP(m_P);
+  m_rightLeadMotor->GetPIDController().SetI(m_I);
+  m_rightLeadMotor->GetPIDController().SetD(m_D);
+  m_rightLeadMotor->GetPIDController().SetOutputRange(kMinOutput, kMaxOutput);
 
-    m_rightLeadMotor->GetEncoder().SetPosition(0);
-    m_leftLeadMotor->GetEncoder().SetPosition(0);
+  m_rightLeadMotor->GetEncoder().SetPosition(0);
+  m_leftLeadMotor->GetEncoder().SetPosition(0);
 
-    m_leftLeadMotor->SetInverted(true);
+  m_leftLeadMotor->SetInverted(true);
 
+  //Velocity is set at 40RPM
+  m_leftLeadMotor->GetPIDController().SetReference(40, rev::ControlType::kVelocity);
 
-
-    //Velocity is set at 40RPM
-    m_leftLeadMotor->GetPIDController().SetReference(40, rev::ControlType::kVelocity);
-
-    //4 inch wheel on a 15:1 reduction (assumptionas)
-    m_leftLeadMotor->GetEncoder().SetPositionConversionFactor((M_PI * 4) / 15);
-    m_rightLeadMotor->GetEncoder().SetPositionConversionFactor((M_PI * 4) / 15);
-    
+  //4 inch wheel on a 15:1 reduction (assumptionas)
+  m_leftLeadMotor->GetEncoder().SetPositionConversionFactor((M_PI * 4) / 15);
+  m_rightLeadMotor->GetEncoder().SetPositionConversionFactor((M_PI * 4) / 15);
 }
-
 void Robot::AutonomousPeriodic() {
   //maybe we can do tick conversion stuff later, if this aint accepted
   //1 foot
@@ -107,17 +93,14 @@ void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
   double leftMotorOutput;
   double rightMotorOutput;
-    //Left Y, Right X
-    double joystickY = stick->GetRawAxis(1);
-    double joystickX = stick->GetRawAxis(4) * -1.0;
 
-    if (fabs(joystickX) <= deadband)
-      joystickX = 0;
-    if (fabs(joystickY) <= deadband)
-      joystickY = 0;
+  double joystickY = -stick->GetRawAxis(1); // negate Axis 1, not Axis 4
+  double joystickX = stick->GetRawAxis(4);
 
-  frc::SmartDashboard::PutNumber("leftMotor", leftMotorOutput);
-  frc::SmartDashboard::PutNumber("rightMotor", rightMotorOutput);
+  if (fabs(joystickX) <= deadband)
+    joystickX = 0;
+  if (fabs(joystickY) <= deadband)
+    joystickY = 0;
   
   double leftAbs = std::fabs(joystickX);
   double rightAbs = std::fabs(joystickY);
@@ -125,15 +108,23 @@ void Robot::TeleopPeriodic() {
 
   double afterleftDeadBand = (1/(1-deadband)) * leftAbs - (deadband/(1/deadband));
   double afterRightDeadBand = (1/(1-deadband)) * rightAbs - (deadband/(1/deadband));
-  joystickX = std::copysign(afterleftDeadBand*afterleftDeadBand ,joystickX);
-  joystickY = std::copysign(afterRightDeadBand*afterRightDeadBand ,joystickY);
-  leftMotorOutput = joystickX + joystickY;
-  rightMotorOutput = joystickY - joystickX;
+  joystickX = std::copysign(afterleftDeadBand*afterleftDeadBand, joystickX);
+  joystickY = std::copysign(afterRightDeadBand*afterRightDeadBand, joystickY);
+
+  if (joystickY >= 0.0) {
+    leftMotorOutput = joystickY + joystickX;
+    rightMotorOutput = joystickY - joystickX;
+  }
+  else {
+    leftMotorOutput = joystickY - joystickX;
+    rightMotorOutput = joystickY + joystickX;
+  }
   
-  //deadband type stuff yk yk
-  
+  frc::SmartDashboard::PutNumber("leftMotorOutput", leftMotorOutput);
+  frc::SmartDashboard::PutNumber("rightMotorOutput", rightMotorOutput);
+
   m_leftLeadMotor->Set(leftMotorOutput);
-  m_rightLeadMotor->Set(rightMotorOutput * -1.0);
+  m_rightLeadMotor->Set(rightMotorOutput);
 
   // myDrive.ArcadeDrive(-driveStick.GetY(), driveStick.GetX());, could I just do this???????
 }
