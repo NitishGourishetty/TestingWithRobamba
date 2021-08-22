@@ -45,8 +45,6 @@ double convertDistanceToTicks (double inches) {
 
 //Rev robotics spark max examples
 void Robot::AutonomousInit() {
-  m_rightLeadMotor->Follow(*m_rightLeadMotor, false);
-  m_leftLeadMotor->Follow(*m_leftLeadMotor, false);
   //Max and min here
   double m_P = 0.1, m_I = 1e-4, m_D = 1, kMaxOutput = 0.5, kMinOutput = -0.5;
   //controls error and stuff ykyk
