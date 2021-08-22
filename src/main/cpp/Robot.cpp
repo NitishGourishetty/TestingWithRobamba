@@ -50,15 +50,14 @@ void Robot::AutonomousPeriodic() {
   if(x==1) {
     m_leftLeadMotor->GetPIDController().SetReference(6.0 , rev::ControlType::kPosition);
     m_rightLeadMotor->GetPIDController().SetReference(6.0 , rev::ControlType::kPosition);
-  }    
   }
-
-  //I really dont know what to do with PID and whatnot and how to make it go here
-
+  //I really dont know what to do with PID and whatnot and how to make it go here    
+}
 
 void Robot::TeleopInit() {}
-
 void Robot::TeleopPeriodic() {
+  // suggest putting this code into one single method in a new file b/c it's very messy for TeleopPeriodic
+
   double leftMotorOutput;
   double rightMotorOutput;
 
@@ -73,11 +72,11 @@ void Robot::TeleopPeriodic() {
   double leftAbs = std::fabs(joystickX);
   double rightAbs = std::fabs(joystickY);
   
-
+  // scaling
   double afterleftDeadBand = (1/(1-deadband)) * leftAbs - (deadband/(1/deadband));
   double afterRightDeadBand = (1/(1-deadband)) * rightAbs - (deadband/(1/deadband));
-  joystickX = std::copysign(afterleftDeadBand*afterleftDeadBand, joystickX);
-  joystickY = std::copysign(afterRightDeadBand*afterRightDeadBand, joystickY);
+  joystickX = std::copysign(pow(afterleftDeadBand, 2), joystickX);
+  joystickY = std::copysign(pow(afterRightDeadBand, 2), joystickY);
 
   if (joystickY >= 0.0) {
     leftMotorOutput = joystickY + joystickX;
