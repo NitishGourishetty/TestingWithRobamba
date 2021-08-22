@@ -45,10 +45,10 @@ void Robot::AutonomousInit() {
 }
 void Robot::AutonomousPeriodic() {
     //Stil a bit confused as to what this does
-    m_leftLeadMotor->GetPIDController().SetReference(6.0 , rev::ControlType::kPosition);
-    m_rightLeadMotor->GetPIDController().SetReference(6.0 , rev::ControlType::kPosition);
+    m_leftLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToRots(6.0), rev::ControlType::kPosition);
+    m_rightLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToRots(6.0) , rev::ControlType::kPosition);
 
-    
+
 
   //I really dont know what to do with PID and whatnot and how to make it go here    
 }
