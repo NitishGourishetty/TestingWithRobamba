@@ -118,8 +118,6 @@ void Robot::TeleopPeriodic() {
 
   m_leftLeadMotor->Set(leftMotorOutput);
   m_rightLeadMotor->Set(rightMotorOutput);
-
-  // myDrive.ArcadeDrive(-driveStick.GetY(), driveStick.GetX());, could I just do this???????
 }
 
 void Robot::DisabledInit() {}
