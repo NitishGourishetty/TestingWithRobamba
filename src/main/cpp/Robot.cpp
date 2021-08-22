@@ -57,6 +57,8 @@ void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
   // suggest putting this code into one single method in a new file b/c it's very messy for TeleopPeriodic
 
+  double afterLeftDeadband;
+  double afterRightDeadband;
   double leftMotorOutput;
   double rightMotorOutput;
 
@@ -72,10 +74,18 @@ void Robot::TeleopPeriodic() {
   double rightAbs = std::fabs(joystickY);
   
   // scaling
-  double afterleftDeadBand = (1/(1-deadband)) * leftAbs - (deadband/(1/deadband));
-  double afterRightDeadBand = (1/(1-deadband)) * rightAbs - (deadband/(1/deadband));
-  joystickX = std::copysign(pow(afterleftDeadBand, 2), joystickX);
-  joystickY = std::copysign(pow(afterRightDeadBand, 2), joystickY);
+  if (leftAbs != 0)
+    afterLeftDeadband = (1/(1-deadband)) * leftAbs - (deadband/(1/deadband));
+  else
+    afterLeftDeadband = 0;
+
+  if (rightAbs != 0)
+    afterRightDeadband = (1/(1-deadband)) * rightAbs - (deadband/(1/deadband));
+  else
+    afterRightDeadband = 0;
+  
+  joystickX = std::copysign(pow(afterLeftDeadband, 2), joystickX);
+  joystickY = std::copysign(pow(afterRightDeadband, 2), joystickY);
 
   //To fix turning backwards
   if (joystickY >= 0.0) {
