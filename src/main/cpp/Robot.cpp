@@ -62,8 +62,6 @@ void Robot::AutonomousInit() {
   m_rightLeadMotor->GetEncoder().SetPosition(0);
   m_leftLeadMotor->GetEncoder().SetPosition(0);
 
-  m_leftLeadMotor->SetInverted(true);
-
   //Velocity is set at 40RPM
   m_leftLeadMotor->GetPIDController().SetReference(40, rev::ControlType::kVelocity);
 
