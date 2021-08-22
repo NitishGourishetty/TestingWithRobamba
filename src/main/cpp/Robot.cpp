@@ -23,24 +23,9 @@ void Robot::RobotPeriodic() {
   frc::SmartDashboard::PutNumber("y ", -stick->GetRawAxis(1));
 }
 
-/**
- * This autonomous (along with the chooser code above) shows how to select
- * between different autonomous modes using the dashboard. The sendable chooser
- * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
- * remove all of the chooser code and uncomment the GetString line to get the
- * auto name from the text box below the Gyro.
- *
- * You can add additional auto modes by adding additional comparisons to the
- * if-else structure below with additional strings. If using the SendableChooser
- * make sure to add them to the chooser code above as well.
- */
-
-//Rev robotics spark max examples
 void Robot::AutonomousInit() {
-  //Max and min here
   double m_P = 0.1, m_I = 1e-4, m_D = 1, kMaxOutput = 0.5, kMinOutput = -0.5;
-  //controls error and stuff ykyk
-  //didn't dereference, just global variables
+
   m_leftLeadMotor->GetPIDController().SetP(m_P);
   m_leftLeadMotor->GetPIDController().SetI(m_I);
   m_leftLeadMotor->GetPIDController().SetD(m_D);
@@ -61,8 +46,6 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() {
   //maybe we can do tick conversion stuff later, if this aint accepted
   //1 foot
-  //does this take in tickconversionstuff automatically, or do I say 42
-  //with this: //rev::CANEncoder m_LeftEncoder = m_leftLeadMotor->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 42);
   int x = 1;
   if(x==1) {
     m_leftLeadMotor->GetPIDController().SetReference(6.0 , rev::ControlType::kPosition);
