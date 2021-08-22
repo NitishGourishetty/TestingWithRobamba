@@ -42,11 +42,13 @@ class Robot : public frc::TimedRobot {
   std::string m_autoSelected;
 };
 
-double Robot::convertDistanceToTicks(double inches) {
+double Robot::convertDistanceToTicks(double feet) {
+  double inches = feet * 12;
   double diameter = 5.7;
   double ticksPerRevolution = 42;
-  double wheelCircumference = 15*M_PI*diameter;
-  return (inches/wheelCircumference) * ticksPerRevolution;
+  double wheelCircumference = M_PI*diameter;
+  // return (inches/wheelCircumference) * ticksPerRevolution;
+  return inches*(ticksPerRevolution/wheelCircumference);
 }
 
 
