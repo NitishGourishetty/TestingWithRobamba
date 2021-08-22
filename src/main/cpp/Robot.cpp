@@ -55,34 +55,48 @@ double convertDistanceToTicks (double inches) {
 
 //Rev robotics spark max examples
 void Robot::AutonomousInit() {
+    m_rightLeadMotor->Follow(*m_rightLeadMotor, false);
+    m_leftLeadMotor->Follow(*m_leftLeadMotor, false);
     //Max and min here
-    double kP = 0.1, kI = 1e-4, kD = 1, kIz = 0, kFF = 0, kMaxOutput = 0.5, kMinOutput = -0.5;
+    double m_P = 0.1, m_I = 1e-4, m_D = 1, kMaxOutput = 0.5, kMinOutput = -0.5;
     //controls error and stuff ykyk
-    //no pointer? aight
-    m_LeftPIDController.SetP(kP);
-    m_LeftPIDController.SetI(kI);
-    m_LeftPIDController.SetD(kD);
-    //What is IZone and FF?
-    m_LeftPIDController.SetIZone(kIz);
-    m_LeftPIDController.SetFF(kFF);
-    m_LeftPIDController.SetOutputRange(kMinOutput, kMaxOutput);
-    
-    //Velocity is set at 100RPM
-    m_LeftPIDController.SetReference(40, rev::ControlType::kVelocity);
-    double velocity = m_LeftEncoder.GetVelocity();
+    //didn't dereference, just global variables
+    m_leftLeadMotor->GetPIDController().SetP(m_P);
+    m_leftLeadMotor->GetPIDController().SetI(m_I);
+    m_leftLeadMotor->GetPIDController().SetD(m_D);
+    m_leftLeadMotor->GetPIDController().SetOutputRange(kMinOutput, kMaxOutput);
 
-    //Runs a position control loop for 10 loops
-    m_LeftPIDController.SetReference(10.0, rev::ControlType::kPosition);
+    m_rightLeadMotor->GetPIDController().SetP(m_P);
+    m_rightLeadMotor->GetPIDController().SetI(m_I);
+    m_rightLeadMotor->GetPIDController().SetD(m_D);
+    m_rightLeadMotor->GetPIDController().SetOutputRange(kMinOutput, kMaxOutput);
 
-    //4 inch wheel on a 15:1 reduction
-    m_LeftEncoder.SetPositionConversionFactor((M_PI * 4) / 15);
-    //lets go one foot
+    m_rightLeadMotor->GetEncoder().SetPosition(0);
+    m_leftLeadMotor->GetEncoder().SetPosition(0);
+
+    m_leftLeadMotor->SetInverted(true);
+
+
+
+    //Velocity is set at 40RPM
+    m_leftLeadMotor->GetPIDController().SetReference(40, rev::ControlType::kVelocity);
+
+    //4 inch wheel on a 15:1 reduction (assumptionas)
+    m_leftLeadMotor->GetEncoder().SetPositionConversionFactor((M_PI * 4) / 15);
+    m_rightLeadMotor->GetEncoder().SetPositionConversionFactor((M_PI * 4) / 15);
     
 }
 
 void Robot::AutonomousPeriodic() {
-  //maybe we can do tick conversion stuff later
-    m_LeftPIDController.SetReference(6.0, rev::ControlType::kPosition);
+  //maybe we can do tick conversion stuff later, if this aint accepted
+  //1 foot
+  //does this take in tickconversionstuff automatically, or do I say 42
+  //with this: //rev::CANEncoder m_LeftEncoder = m_leftLeadMotor->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 42);
+  int x = 1;
+  if(x==1) {
+    m_leftLeadMotor->GetPIDController().SetReference(6.0 , rev::ControlType::kPosition);
+    m_rightLeadMotor->GetPIDController().SetReference(6.0 , rev::ControlType::kPosition);
+  }    
   }
 
   //I really dont know what to do with PID and whatnot and how to make it go here

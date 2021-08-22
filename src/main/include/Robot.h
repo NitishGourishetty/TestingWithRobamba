@@ -23,10 +23,10 @@ class Robot : public frc::TimedRobot {
 
   double deadband = 0.08;
 
-  rev::CANPIDController m_LeftPIDController = m_leftLeadMotor->GetPIDController();
+  //rev::CANPIDController m_LeftPIDController = m_leftLeadMotor->GetPIDController();
   //Is quadrature the right type?
   //I put type of encoder and revs per
-  rev::CANEncoder m_LeftEncoder = m_leftLeadMotor->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 42);
+  //rev::CANEncoder m_LeftEncoder = m_leftLeadMotor->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 42);
 
 
   void RobotInit() override;
