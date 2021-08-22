@@ -52,34 +52,37 @@ double convertDistanceToTicks (double inches) {
  * if-else structure below with additional strings. If using the SendableChooser
  * make sure to add them to the chooser code above as well.
  */
-void Robot::AutonomousInit() {
-   m_leftLeadMotor->GetEncoder().SetPosition(0);
-   m_rightLeadMotor->GetEncoder().SetPosition(0);
 
+//Rev robotics spark max examples
+void Robot::AutonomousInit() {
+    //Max and min here
+    double kP = 0.1, kI = 1e-4, kD = 1, kIz = 0, kFF = 0, kMaxOutput = 0.5, kMinOutput = -0.5;
+    //controls error and stuff ykyk
+    //no pointer? aight
+    m_LeftPIDController.SetP(kP);
+    m_LeftPIDController.SetI(kI);
+    m_LeftPIDController.SetD(kD);
+    //What is IZone and FF?
+    m_LeftPIDController.SetIZone(kIz);
+    m_LeftPIDController.SetFF(kFF);
+    m_LeftPIDController.SetOutputRange(kMinOutput, kMaxOutput);
+    
+    //Velocity is set at 100RPM
+    m_LeftPIDController.SetReference(40, rev::ControlType::kVelocity);
+    double velocity = m_LeftEncoder.GetVelocity();
+
+    //Runs a position control loop for 10 loops
+    m_LeftPIDController.SetReference(10.0, rev::ControlType::kPosition);
+
+    //4 inch wheel on a 15:1 reduction
+    m_LeftEncoder.SetPositionConversionFactor((M_PI * 4) / 15);
+    //lets go one foot
+    
 }
 
 void Robot::AutonomousPeriodic() {
-  //Encoder PID Stuff 
- 
-  //What do I put here, im not sure about any of these values
-  double m_P = 10;
-  double m_I = 10;
-  double m_D = 5;
-  double ticksPerRevolution = 42;
-  double wheelCircumference = 15;
-   
-   //(inches is distance)
-  double ticksNeeded = convertDistanceToTicks(36);
-   
-   //So 5 feet would be (5/distanceCoveredPerRev ) * tickPerRevolution
-  double leftMotorRevs = m_leftLeadMotor->GetEncoder().GetPosition() * ticksPerRevolution;
-  double rightMotorRevs = m_rightLeadMotor->GetEncoder().GetPosition() * ticksPerRevolution;
-
-  //which do you check, it shouldn't matter
-  if(leftMotorRevs < 100) {
-      m_leftLeadMotor->Set(0.5);
-      m_rightLeadMotor->Set(0.5);
-    }
+  //maybe we can do tick conversion stuff later
+    m_LeftPIDController.SetReference(6.0, rev::ControlType::kPosition);
   }
 
   //I really dont know what to do with PID and whatnot and how to make it go here
@@ -90,13 +93,6 @@ void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
   double leftMotorOutput;
   double rightMotorOutput;
-
-  //Are the numbers correct and does it return -128 to 128 kind of cofnused
-  // double yStick = stick->GetRawAxis(1);
-  // double xStick = stick->GetRawAxis(4);
-
-    //double joystickX = stick->GetX();
-    //double joystickY = stick->GetY();
     //Left Y, Right X
     double joystickY = stick->GetRawAxis(1);
     double joystickX = stick->GetRawAxis(4) * -1.0;
@@ -106,56 +102,12 @@ void Robot::TeleopPeriodic() {
     if (fabs(joystickY) <= deadband)
       joystickY = 0;
 
-    //copy sign just copies the sign of the 2nd input
-    //copysign(-10, 1) will return 10
-    //hmm?
-  //    double maxSpeed = std::max(std::fabs(joystickX), std::fabs(joystickY));
-  //    if(joystickY < 0) 
-  //      maxSpeed = -maxSpeed;
-  
-  // if(joystickY >= 0.0) {
-  //     if(joystickX >= 0) {
-  //     //1st quadrant
-  //     leftMotorOutput=maxSpeed;
-  //     rightMotorOutput=joystickY-joystickX;
-  //     } else {
-  //     //2nd quadrant
-  //     leftMotorOutput=joystickY+joystickX;
-  //     rightMotorOutput=maxSpeed;
-  //     }
-  // }
-  // else
-  // {
-  //   if(joystickX >= 0) {
-  //   //3rd quadrant
-  //   leftMotorOutput=joystickX+joystickY;
-  //   rightMotorOutput=maxSpeed;
-  //     } else {
-  //   //4th quadrant
-  //   leftMotorOutput=maxSpeed;
-  //   rightMotorOutput=joystickY-joystickX;
-  //     }
-  // }
-  
-
-
-  //Not working right now-figure out later
-  //AFJOBWFIOFIFIFIFIFIFIFBIFIFOBIBFBFBBFB
-  // leftMotorOutput = joystickX + joystickY;
-  // rightMotorOutput = joystickX - joystickY;
-
   frc::SmartDashboard::PutNumber("leftMotor", leftMotorOutput);
   frc::SmartDashboard::PutNumber("rightMotor", rightMotorOutput);
   
-  double leftAbs = std::abs(joystickX);
-  double rightAbs = std::abs(joystickY);
+  double leftAbs = std::fabs(joystickX);
+  double rightAbs = std::fabs(joystickY);
   
-  // leftMotorOutput = (1/(1-deadband)) * leftAbs - (deadband/(1/deadband));
-  
-  // rightMotorOutput = (1/(1-deadband)) * rightAbs - (deadband/(1/deadband));
-  // leftMotorOutput = std::copysign(leftMotorOutput*leftMotorOutput ,leftMotorOutput);
-  // rightMotorOutput = std::copysign(rightMotorOutput*rightMotorOutput ,rightMotorOutput);
-  //So it doesnt lose sign
 
   double afterleftDeadBand = (1/(1-deadband)) * leftAbs - (deadband/(1/deadband));
   double afterRightDeadBand = (1/(1-deadband)) * rightAbs - (deadband/(1/deadband));
