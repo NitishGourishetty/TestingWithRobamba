@@ -23,14 +23,6 @@ void Robot::RobotPeriodic() {
   frc::SmartDashboard::PutNumber("y ", -stick->GetRawAxis(1));
 }
 
-double convertDistanceToTicks (double inches) {
-  double diameter = 5.7;
-  double ticksPerRevolution = 42;
-  double wheelCircumference = 15*M_PI*diameter;
-  return (inches/wheelCircumference) * ticksPerRevolution;
-}
-
-
 /**
  * This autonomous (along with the chooser code above) shows how to select
  * between different autonomous modes using the dashboard. The sendable chooser
