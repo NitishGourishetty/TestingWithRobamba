@@ -62,12 +62,9 @@ void Robot::AutonomousInit() {
   m_rightLeadMotor->GetEncoder().SetPosition(0);
   m_leftLeadMotor->GetEncoder().SetPosition(0);
 
-  //Velocity is set at 40RPM
-  m_leftLeadMotor->GetPIDController().SetReference(40, rev::ControlType::kVelocity);
-
-  //4 inch wheel on a 15:1 reduction (assumptionas)
-  m_leftLeadMotor->GetEncoder().SetPositionConversionFactor((M_PI * 4) / 15);
-  m_rightLeadMotor->GetEncoder().SetPositionConversionFactor((M_PI * 4) / 15);
+  // 15:1 reduction (assumptionas)
+  m_leftLeadMotor->GetEncoder().SetPositionConversionFactor((M_PI * 5.7) / 15);
+  m_rightLeadMotor->GetEncoder().SetPositionConversionFactor((M_PI * 5.7) / 15);
 }
 void Robot::AutonomousPeriodic() {
   //maybe we can do tick conversion stuff later, if this aint accepted
