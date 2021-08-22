@@ -24,9 +24,9 @@ void Robot::RobotPeriodic() {
 }
 
 double convertDistanceToTicks (double inches) {
-  double radius = 3;
+  double diameter = 5.7;
   double ticksPerRevolution = 42;
-  double wheelCircumference = 15*2*M_PI*radius;
+  double wheelCircumference = 15*M_PI*radius;
   return (inches/wheelCircumference) * ticksPerRevolution;
 }
 
