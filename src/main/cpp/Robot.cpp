@@ -39,7 +39,7 @@ void Robot::AutonomousInit() {
   m_rightLeadMotor->GetEncoder().SetPosition(0);
   m_leftLeadMotor->GetEncoder().SetPosition(0);
 
-  // 15:1 reduction (assumptionas)
+  // 15:1 reduction (assumptions), with a 5.7 Diameter wheel
   m_leftLeadMotor->GetEncoder().SetPositionConversionFactor((M_PI * 5.7) / 15);
   m_rightLeadMotor->GetEncoder().SetPositionConversionFactor((M_PI * 5.7) / 15);
 }
