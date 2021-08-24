@@ -21,10 +21,11 @@ void Robot::RobotInit() {
 void Robot::RobotPeriodic() {
   frc::SmartDashboard::PutNumber("x", stick->GetRawAxis(4));
   frc::SmartDashboard::PutNumber("y ", -stick->GetRawAxis(1));
+  frc::SmartDashboard::PutNumber("rotations", Robot::convertDistanceToRots(6));
 }
 
 void Robot::AutonomousInit() {
-  double m_P = 0.1, m_I = 1e-4, m_D = 1, kMaxOutput = 0.5, kMinOutput = -0.5;
+  double m_P = 0.5, m_I = 1e-4, m_D = 0.1, kMaxOutput = 0.25, kMinOutput = -0.25;
 
   m_leftLeadMotor->GetPIDController().SetP(m_P);
   m_leftLeadMotor->GetPIDController().SetI(m_I);
@@ -45,8 +46,8 @@ void Robot::AutonomousInit() {
 }
 void Robot::AutonomousPeriodic() {
     //Stil a bit confused as to what this does
-    m_leftLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToRots(6.0), rev::ControlType::kPosition);
-    m_rightLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToRots(6.0) , rev::ControlType::kPosition);
+    m_leftLeadMotor->GetPIDController().SetReference(-Robot::convertDistanceToRots(3), rev::ControlType::kPosition);
+    m_rightLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToRots(3) , rev::ControlType::kPosition);
 
 
 
@@ -102,7 +103,8 @@ void Robot::TeleopPeriodic() {
   frc::SmartDashboard::PutNumber("leftMotorOutput", leftMotorOutput);
   frc::SmartDashboard::PutNumber("rightMotorOutput", rightMotorOutput);
 
-  m_leftLeadMotor->Set(leftMotorOutput);
+  m_leftLeadMotor->Set(-leftMotorOutput);
+  //negate here
   m_rightLeadMotor->Set(rightMotorOutput);
 }
 

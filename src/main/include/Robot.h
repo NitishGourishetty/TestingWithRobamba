@@ -48,7 +48,7 @@ double Robot::convertDistanceToRots(double feet) {
   double ticksPerRevolution = 42;
   double wheelCircumference = M_PI*diameter;
   // return (inches/wheelCircumference) * ticksPerRevolution;
-  return (inches*(ticksPerRevolution/wheelCircumference))/ticksPerRevolution;
+  return ((inches*(ticksPerRevolution/wheelCircumference))/ticksPerRevolution)*wheelCircumference;
 }
 
 
