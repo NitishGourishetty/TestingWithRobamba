@@ -46,19 +46,40 @@ void Robot::AutonomousInit() {
   m_leftLeadMotor->GetEncoder().SetPositionConversionFactor(14/50*(24/40));
   m_rightLeadMotor->GetEncoder().SetPositionConversionFactor(14/50*(24/40));
   prevTime = frc::Timer::GetFPGATimestamp();
-
+  currentPosition = 0;
+  currentVelocity = 0;
 }
 void Robot::AutonomousPeriodic() {
+  double timeElapsed = frc::Timer::GetFPGATimestamp() - prevTime;
+  currentVelocity = currentVelocity + (maxAcc*timeElapsed); 
+  //currentPosition = ((1/2) * maxAcc * pow(timeElapsed, 2)) + (currentVelocity * timeElapsed);
+  
+  //Figure out Distance to Decelerate with math again
+  distanceToDeccelerate = (std::pow(currentVelocity, 2)/(2*maxAcc));
+  
+  if(distanceToDeccelerate < positionTotal - currentPosition) {
+      currentVelocity -= (maxAcc * timeElapsed);
+  } else {
+      currentVelocity += (maxAcc * timeElapsed);
+      if(currentVelocity > maxVelocity) {
+        currentVelocity = maxVelocity;
+      }
+      currentPosition += currentVelocity * timeElapsed;
+  }
 
+    //1/2at^2 + Vct
+    double setPos = 0.5*(maxAcc)*(std::pow(timeElapsed, 2)) + (currentVelocity*(timeElapsed)); 
 
-    //static const double setPos = 0.5*(acceleration)*(std::pow(timeNeeded, 2)); 
+    if(currentPosition < positionTotal) {
+      m_leftLeadMotor->GetPIDController().SetReference(-Robot::convertDistanceToRots(setPos), rev::ControlType::kPosition);
+      m_rightLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToRots(setPos) , rev::ControlType::kPosition);
+    }
 
     //I know that it will always go a little above the feetNeeded, Ill fix it later
 
-      //m_leftLeadMotor->GetPIDController().SetReference(-Robot::convertDistanceToRots(setPos), rev::ControlType::kPosition);
-      //m_rightLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToRots(setPos) , rev::ControlType::kPosition);
+      
 
- 
+  prevTime = frc::Timer::GetFPGATimestamp();
   
 
   //I really dont know what to do with PID and whatnot and how to make it go here    
