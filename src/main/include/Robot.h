@@ -22,6 +22,7 @@ class Robot : public frc::TimedRobot {
   frc::Joystick *stick = new frc::Joystick(0);
 
   double deadband = 0.08;
+  double ftNeeded = 6;
 
   void RobotInit() override;
   void RobotPeriodic() override;
@@ -48,7 +49,8 @@ double Robot::convertDistanceToRots(double feet) {
   double ticksPerRevolution = 42;
   double wheelCircumference = M_PI*diameter;
   // return (inches/wheelCircumference) * ticksPerRevolution;
-  return ((inches*(ticksPerRevolution/wheelCircumference))/ticksPerRevolution)*wheelCircumference;
+  //fix
+  return ((inches*(ticksPerRevolution/wheelCircumference))/ticksPerRevolution)*(wheelCircumference);
 }
 
 

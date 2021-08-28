@@ -21,12 +21,14 @@ void Robot::RobotInit() {
 void Robot::RobotPeriodic() {
   frc::SmartDashboard::PutNumber("x", stick->GetRawAxis(4));
   frc::SmartDashboard::PutNumber("y ", -stick->GetRawAxis(1));
-  frc::SmartDashboard::PutNumber("rotations", Robot::convertDistanceToRots(6));
+  frc::SmartDashboard::PutNumber("rotations", Robot::convertDistanceToRots(0.5*(20)*(.03)));
+  frc::SmartDashboard::PutNumber("feetNeeded",ftNeeded);
 }
 
 void Robot::AutonomousInit() {
-  double m_P = 0.5, m_I = 1e-4, m_D = 0.1, kMaxOutput = 0.25, kMinOutput = -0.25;
-
+  double m_P = 0.5, m_I = 0, m_D = 0.3, kMaxOutput = 0.25, kMinOutput = -0.25;
+  
+  //Set feet here
   m_leftLeadMotor->GetPIDController().SetP(m_P);
   m_leftLeadMotor->GetPIDController().SetI(m_I);
   m_leftLeadMotor->GetPIDController().SetD(m_D);
@@ -41,13 +43,24 @@ void Robot::AutonomousInit() {
   m_leftLeadMotor->GetEncoder().SetPosition(0);
 
   // 15:1 reduction (assumptions), with a 5.7 Diameter wheel
-  m_leftLeadMotor->GetEncoder().SetPositionConversionFactor((M_PI * 5.7) / 15);
-  m_rightLeadMotor->GetEncoder().SetPositionConversionFactor((M_PI * 5.7) / 15);
+  m_leftLeadMotor->GetEncoder().SetPositionConversionFactor(14/50*(24/40));
+  m_rightLeadMotor->GetEncoder().SetPositionConversionFactor(14/50*(24/40));
 }
 void Robot::AutonomousPeriodic() {
-    //Stil a bit confused as to what this does
-    m_leftLeadMotor->GetPIDController().SetReference(-Robot::convertDistanceToRots(3), rev::ControlType::kPosition);
-    m_rightLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToRots(3) , rev::ControlType::kPosition);
+    //need to make .003?
+    double setPos = 0.5*(20)*(std::pow(.3, 2)); 
+    //I know that it will always go a little above the feetNeeded, Ill fix it later
+    if(ftNeeded > 0) {
+      //idek
+      //1/2(at^2) = 1/6a(t^3) + c
+      //Time is 30 ms right?
+      //do I maake it 30 or .003
+      
+      m_leftLeadMotor->GetPIDController().SetReference(-Robot::convertDistanceToRots(setPos), rev::ControlType::kPosition);
+      m_rightLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToRots(setPos) , rev::ControlType::kPosition);
+      ftNeeded -= setPos;
+    }
+    
 
 
 
