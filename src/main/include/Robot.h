@@ -11,6 +11,7 @@
 #include <frc/smartdashboard/SendableChooser.h>
 #include <frc/Joystick.h>
 #include <frc/DriverStation.h>
+#include <frc/Timer.h>
 
 class Robot : public frc::TimedRobot {
  public:
@@ -22,7 +23,19 @@ class Robot : public frc::TimedRobot {
   frc::Joystick *stick = new frc::Joystick(0);
 
   double deadband = 0.08;
-  double ftNeeded = 6;
+
+  double prevTime;
+
+  double distanceToDeccelerate;
+  double currentVelocity;
+  static const double maxVelocity = 21;
+  static const double maxAcc = 20;
+  //feet needed
+  double positionTotal = 6;
+  //setpoint
+  double currentPosition;
+
+
 
   void RobotInit() override;
   void RobotPeriodic() override;

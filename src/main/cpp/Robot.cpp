@@ -7,6 +7,7 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <math.h>
 
+
 void Robot::RobotInit() {
   m_leftLeadMotor->SetInverted(true);
   m_leftFollowMotor->Follow(*m_leftLeadMotor, false);
@@ -22,7 +23,6 @@ void Robot::RobotPeriodic() {
   frc::SmartDashboard::PutNumber("x", stick->GetRawAxis(4));
   frc::SmartDashboard::PutNumber("y ", -stick->GetRawAxis(1));
   frc::SmartDashboard::PutNumber("rotations", Robot::convertDistanceToRots(0.5*(20)*(.03)));
-  frc::SmartDashboard::PutNumber("feetNeeded",ftNeeded);
 }
 
 void Robot::AutonomousInit() {
@@ -45,24 +45,21 @@ void Robot::AutonomousInit() {
   // 15:1 reduction (assumptions), with a 5.7 Diameter wheel
   m_leftLeadMotor->GetEncoder().SetPositionConversionFactor(14/50*(24/40));
   m_rightLeadMotor->GetEncoder().SetPositionConversionFactor(14/50*(24/40));
+  prevTime = frc::Timer::GetFPGATimestamp();
+
 }
 void Robot::AutonomousPeriodic() {
-    //need to make .003?
-    double setPos = 0.5*(20)*(std::pow(.3, 2)); 
+
+
+    //static const double setPos = 0.5*(acceleration)*(std::pow(timeNeeded, 2)); 
+
     //I know that it will always go a little above the feetNeeded, Ill fix it later
-    if(ftNeeded > 0) {
-      //idek
-      //1/2(at^2) = 1/6a(t^3) + c
-      //Time is 30 ms right?
-      //do I maake it 30 or .003
-      
-      m_leftLeadMotor->GetPIDController().SetReference(-Robot::convertDistanceToRots(setPos), rev::ControlType::kPosition);
-      m_rightLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToRots(setPos) , rev::ControlType::kPosition);
-      ftNeeded -= setPos;
-    }
-    
 
+      //m_leftLeadMotor->GetPIDController().SetReference(-Robot::convertDistanceToRots(setPos), rev::ControlType::kPosition);
+      //m_rightLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToRots(setPos) , rev::ControlType::kPosition);
 
+ 
+  
 
   //I really dont know what to do with PID and whatnot and how to make it go here    
 }
