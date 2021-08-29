@@ -59,16 +59,17 @@ void Robot::AutonomousPeriodic() {
   
   if(distanceToDeccelerate < positionTotal - currentPosition) {
       currentVelocity -= (maxAcc * timeElapsed);
-  } else {
+  } 
+  else {
       currentVelocity += (maxAcc * timeElapsed);
       if(currentVelocity > maxVelocity) {
         currentVelocity = maxVelocity;
       }
-      currentPosition += currentVelocity * timeElapsed;
+  currentPosition += currentVelocity * timeElapsed;
   }
 
     //1/2at^2 + Vct
-    double setPos = 0.5*(maxAcc)*(std::pow(timeElapsed, 2)) + (currentVelocity*(timeElapsed)); 
+    double setPos = currentVelocity * timeElapsed;
 
     if(currentPosition < positionTotal) {
       m_leftLeadMotor->GetPIDController().SetReference(-Robot::convertDistanceToRots(setPos), rev::ControlType::kPosition);
