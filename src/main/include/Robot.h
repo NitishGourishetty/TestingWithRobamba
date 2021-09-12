@@ -28,8 +28,8 @@ class Robot : public frc::TimedRobot {
 
   double distanceToDeccelerate;
   double currentVelocity;
-  static const double maxVelocity = 21;
-  static const double maxAcc = 20;
+  const double maxVelocity = 21;
+  const double maxAcc = 20;
   //feet needed
   double positionTotal = 6;
   //setpoint
