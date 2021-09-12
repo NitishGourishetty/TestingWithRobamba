@@ -20,6 +20,9 @@ class Robot : public frc::TimedRobot {
   rev::CANSparkMax * m_leftFollowMotor = new rev::CANSparkMax(4, rev::CANSparkMax::MotorType::kBrushless);
   rev::CANSparkMax * m_rightFollowMotor = new rev::CANSparkMax(2, rev::CANSparkMax::MotorType::kBrushless);
 
+  rev::CANEncoder m_leftEncoder = m_leftLeadMotor->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 42);
+  rev::CANEncoder m_rightEncoder = m_rightLeadMotor->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 42);
+
   frc::Joystick *stick = new frc::Joystick(0);
 
   double deadband = 0.08;
