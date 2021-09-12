@@ -39,12 +39,12 @@ void Robot::AutonomousInit() {
   m_rightLeadMotor->GetPIDController().SetD(m_D);
   m_rightLeadMotor->GetPIDController().SetOutputRange(kMinOutput, kMaxOutput);
 
-  m_rightLeadMotor->GetEncoder().SetPosition(0);
-  m_leftLeadMotor->GetEncoder().SetPosition(0);
+  m_leftEncoder.SetPosition(0);
+  m_rightEncoder.SetPosition(0);
 
   // 15:1 reduction (assumptions), with a 5.7 Diameter wheel
-  m_leftLeadMotor->GetEncoder().SetPositionConversionFactor(14/50*(24/40));
-  m_rightLeadMotor->GetEncoder().SetPositionConversionFactor(14/50*(24/40));
+  m_leftEncoder.SetPositionConversionFactor(14/50*(24/40));
+  m_rightEncoder.SetPositionConversionFactor(14/50*(24/40));
   prevTime = frc::Timer::GetFPGATimestamp();
   currentPosition = 0;
   currentVelocity = 0;
