@@ -51,30 +51,38 @@ void Robot::AutonomousInit() {
 }
 void Robot::AutonomousPeriodic() {
   double timeElapsed = frc::Timer::GetFPGATimestamp() - prevTime;
+  //adding on velocity that we accelerated because of the timer
   currentVelocity = currentVelocity + (maxAcc*timeElapsed); 
   //currentPosition = ((1/2) * maxAcc * pow(timeElapsed, 2)) + (currentVelocity * timeElapsed);
   
-  //Figure out Distance to Decelerate with math again
+  //Need to derive/check this thing again -> Do later
+  //But what this is doing is checking the distance we need to deccelerate (with what's possible)
   distanceToDeccelerate = (std::pow(currentVelocity, 2)/(2*maxAcc));
   
+  //If the amount of distance we have is less than distance to deccelerate, reduce velocity, by the most possible
   if(distanceToDeccelerate < positionTotal - currentPosition) {
+      //I'm pretty sure once we get to the point, the robot will completely just start going backwards or whatever
+      //what do I do to make it stop, or am I already handling that -> I think I am but just make sure
       currentVelocity -= (maxAcc * timeElapsed);
   } 
   else {
+    //Else increase velocity
       currentVelocity += (maxAcc * timeElapsed);
       if(currentVelocity > maxVelocity) {
         currentVelocity = maxVelocity;
       }
+  //update the current position using velocity
   currentPosition += currentVelocity * timeElapsed;
   }
 
-    //1/2at^2 + Vct
-    double setPos = currentVelocity * timeElapsed;
+  //d = vt
+  //We want to go in small intervals so we are only going this distance each time until we stop going
+  double setPos = currentVelocity * timeElapsed;
 
-    if(currentPosition < positionTotal) {
-      m_leftLeadMotor->GetPIDController().SetReference(-Robot::convertDistanceToRots(setPos), rev::ControlType::kPosition);
-      m_rightLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToRots(setPos) , rev::ControlType::kPosition);
-    }
+  if(currentPosition < positionTotal) {
+    m_leftLeadMotor->GetPIDController().SetReference(-Robot::convertDistanceToRots(Robot::convertDistanceToRots(setPos)), rev::ControlType::kPosition);
+    m_rightLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToRots(Robot::convertDistanceToRots(setPos)) , rev::ControlType::kPosition);
+  }
 
     //I know that it will always go a little above the feetNeeded, Ill fix it later
 
