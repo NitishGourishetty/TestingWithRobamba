@@ -50,6 +50,7 @@ void Robot::AutonomousInit() {
   currentVelocity = 0;
 }
 void Robot::AutonomousPeriodic() {
+  //Does this work or is there a substantial delay in the init call
   double timeElapsed = frc::Timer::GetFPGATimestamp() - prevTime;
   //adding on velocity that we accelerated because of the timer
   currentVelocity = currentVelocity + (maxAcc*timeElapsed); 
