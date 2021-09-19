@@ -61,7 +61,7 @@ void Robot::AutonomousPeriodic() {
   distanceToDeccelerate = (std::pow(currentVelocity, 2)/(2*maxAcc));
   
   //If the amount of distance we have is less than distance to deccelerate, reduce velocity, by the most possible
-  if(distanceToDeccelerate < positionTotal - currentPosition) {
+  if(distanceToDeccelerate > positionTotal - currentPosition) {
       //I'm pretty sure once we get to the point, the robot will completely just start going backwards or whatever
       //what do I do to make it stop, or am I already handling that -> I think I am but just make sure
       currentVelocity -= (maxAcc * timeElapsed);
@@ -73,6 +73,7 @@ void Robot::AutonomousPeriodic() {
         currentVelocity = maxVelocity;
       }
   //update the current position using velocity
+  //Could do encoders, but manual is pretty good
   currentPosition += currentVelocity * timeElapsed;
   }
 
