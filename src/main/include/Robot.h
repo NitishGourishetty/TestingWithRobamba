@@ -12,20 +12,24 @@
 #include <frc/Joystick.h>
 #include <frc/DriverStation.h>
 #include <frc/Timer.h>
+#include "SFDrive.h"
+
 
 class Robot : public frc::TimedRobot {
  public:
-  rev::CANSparkMax * m_leftLeadMotor = new rev::CANSparkMax(3, rev::CANSparkMax::MotorType::kBrushless);
-  rev::CANSparkMax * m_rightLeadMotor = new rev::CANSparkMax(1, rev::CANSparkMax::MotorType::kBrushless);
-  rev::CANSparkMax * m_leftFollowMotor = new rev::CANSparkMax(4, rev::CANSparkMax::MotorType::kBrushless);
-  rev::CANSparkMax * m_rightFollowMotor = new rev::CANSparkMax(2, rev::CANSparkMax::MotorType::kBrushless);
+  rev::CANSparkMax * m_leftLeadMotor = new rev::CANSparkMax(12, rev::CANSparkMax::MotorType::kBrushless);
+  rev::CANSparkMax * m_rightLeadMotor = new rev::CANSparkMax(15, rev::CANSparkMax::MotorType::kBrushless);
+  rev::CANSparkMax * m_leftFollowMotor = new rev::CANSparkMax(13, rev::CANSparkMax::MotorType::kBrushless);
+  rev::CANSparkMax * m_rightFollowMotor = new rev::CANSparkMax(14, rev::CANSparkMax::MotorType::kBrushless);
 
   rev::CANEncoder m_leftEncoder = m_leftLeadMotor->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 42);
   rev::CANEncoder m_rightEncoder = m_rightLeadMotor->GetEncoder(rev::CANEncoder::EncoderType::kHallSensor, 42);
 
   frc::Joystick *stick = new frc::Joystick(0);
+  SFDrive* m_robotDrive = new SFDrive(m_leftLeadMotor, m_rightLeadMotor, m_leftFollowMotor, m_rightFollowMotor);
 
-  double deadband = 0.08;
+  double joystickY = 0.0; // negate Axis 1, not Axis 4
+  double joystickX = 0.0;
 
   double prevTime;
 

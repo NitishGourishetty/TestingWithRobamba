@@ -100,54 +100,9 @@ void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
   // suggest putting this code into one single method in a new file b/c it's very messy for TeleopPeriodic
 
-  double afterLeftDeadband;
-  double afterRightDeadband;
-  double leftMotorOutput;
-  double rightMotorOutput;
-
-  double joystickY = -stick->GetRawAxis(1); // negate Axis 1, not Axis 4
-  double joystickX = stick->GetRawAxis(4);
-
-  if (fabs(joystickX) <= deadband)
-    joystickX = 0;
-  if (fabs(joystickY) <= deadband)
-    joystickY = 0;
-  
-  double leftAbs = std::fabs(joystickX);
-  double rightAbs = std::fabs(joystickY);
-  
-  // scaling
-
-  //reason for the if statements is that if leftAbs is 0 when its under deadband, the input becomes negative, so it fixes it
-  if (leftAbs != 0)
-    afterLeftDeadband = (1/(1-deadband)) * leftAbs - (deadband/(1/deadband));
-  else
-    afterLeftDeadband = 0;
-
-  if (rightAbs != 0)
-    afterRightDeadband = (1/(1-deadband)) * rightAbs - (deadband/(1/deadband));
-  else
-    afterRightDeadband = 0;
-  
-  joystickX = std::copysign(pow(afterLeftDeadband, 2), joystickX);
-  joystickY = std::copysign(pow(afterRightDeadband, 2), joystickY);
-
-  //To fix turning backwards
-  if (joystickY >= 0.0) {
-    leftMotorOutput = joystickY + joystickX;
-    rightMotorOutput = joystickY - joystickX;
-  }
-  else {
-    leftMotorOutput = joystickY - joystickX;
-    rightMotorOutput = joystickY + joystickX;
-  }
-  
-  frc::SmartDashboard::PutNumber("leftMotorOutput", leftMotorOutput);
-  frc::SmartDashboard::PutNumber("rightMotorOutput", rightMotorOutput);
-
-  m_leftLeadMotor->Set(-leftMotorOutput);
-  //negate here
-  m_rightLeadMotor->Set(rightMotorOutput);
+  joystickY = -stick->GetRawAxis(1); // negate Axis 1, not Axis 4
+  joystickX = stick->GetRawAxis(4);
+  m_robotDrive->ArcadeDrive(joystickX, joystickY);
 }
 
 void Robot::DisabledInit() {}
