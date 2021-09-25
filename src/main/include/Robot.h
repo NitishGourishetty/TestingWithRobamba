@@ -70,6 +70,10 @@ double Robot::convertDistanceToRots(double feet) {
   double wheelCircumference = M_PI*diameter;
   // return (inches/wheelCircumference) * ticksPerRevolution;
   //fix
+  //don't need * 42, just rotations
+  //double ticksNeeded = inches / wheelCircumference * 42 
+  //double rots = inches / wheelCircumference 
+
   return ((inches*(ticksPerRevolution/wheelCircumference))/ticksPerRevolution)*(wheelCircumference);
 }
 

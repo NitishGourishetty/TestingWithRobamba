@@ -79,11 +79,11 @@ void Robot::AutonomousPeriodic() {
 
   //d = vt
   //We want to go in small intervals so we are only going this distance each time until we stop going
-  double setPos = currentVelocity * timeElapsed;
+  //double setPos = currentVelocity * timeElapsed;
 
   if(currentPosition < positionTotal) {
-    m_leftLeadMotor->GetPIDController().SetReference(-Robot::convertDistanceToRots(Robot::convertDistanceToRots(setPos)), rev::ControlType::kPosition);
-    m_rightLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToRots(Robot::convertDistanceToRots(setPos)) , rev::ControlType::kPosition);
+    m_leftLeadMotor->GetPIDController().SetReference(-(Robot::convertDistanceToRots(currentPosition)), rev::ControlType::kPosition);
+    m_rightLeadMotor->GetPIDController().SetReference((Robot::convertDistanceToRots(currentPosition)) , rev::ControlType::kPosition);
   }
 
     //I know that it will always go a little above the feetNeeded, Ill fix it later
