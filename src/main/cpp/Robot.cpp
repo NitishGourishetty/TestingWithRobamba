@@ -22,12 +22,18 @@ void Robot::RobotInit() {
 void Robot::RobotPeriodic() {
   frc::SmartDashboard::PutNumber("x", stick->GetRawAxis(4));
   frc::SmartDashboard::PutNumber("y ", -stick->GetRawAxis(1));
-  frc::SmartDashboard::PutNumber("rotations", Robot::convertDistanceToRots(0.5*(20)*(.03)));
+  frc::SmartDashboard::PutNumber("current velocity", currentVelocity);
+  frc::SmartDashboard::PutNumber("current position", currentPosition);
+  frc::SmartDashboard::PutNumber("Encoder", m_rightEncoder.GetPosition());
+  //frc::SmartDashboard::PutNumber("current velocity", currentVelocity);
+  //frc::SmartDashboard::PutNumber("current position", currentPosition);
 }
 
 void Robot::AutonomousInit() {
-  double m_P = 0.5, m_I = 0, m_D = 0.3, kMaxOutput = 0.25, kMinOutput = -0.25;
-  
+  //wait so if it doesnt show me the rest of the values it gives, its probabl the PID
+  //double m_P = 0.05, m_I = 0.05, m_D = 0.1, kMaxOutput = 0.25, kMinOutput = -0.25;
+  double m_P = 0.05, m_I = 0.001, m_D = 0.03, kMaxOutput = 0.25, kMinOutput = -0.25;
+  //or do I set this to 0
   //Set feet here
   m_leftLeadMotor->GetPIDController().SetP(m_P);
   m_leftLeadMotor->GetPIDController().SetI(m_I);
@@ -41,6 +47,8 @@ void Robot::AutonomousInit() {
 
   m_leftEncoder.SetPosition(0);
   m_rightEncoder.SetPosition(0);
+  m_leftEncoder.SetInverted(true);
+  m_rightEncoder.SetInverted(true);
 
   // 15:1 reduction (assumptions), with a 5.7 Diameter wheel
   m_leftEncoder.SetPositionConversionFactor(14/50*(24/40));
@@ -48,25 +56,22 @@ void Robot::AutonomousInit() {
   prevTime = frc::Timer::GetFPGATimestamp();
   currentPosition = 0;
   currentVelocity = 0;
+  positionTotal = frc::SmartDashboard::GetNumber("positionTotal", 6);
+  frc::SmartDashboard::PutNumber("positionTotal", positionTotal);
 }
 void Robot::AutonomousPeriodic() {
   //Does this work or is there a substantial delay in the init call
-  double timeElapsed = frc::Timer::GetFPGATimestamp() - prevTime;
-  //adding on velocity that we accelerated because of the timer
-  currentVelocity = currentVelocity + (maxAcc*timeElapsed); 
-  //currentPosition = ((1/2) * maxAcc * pow(timeElapsed, 2)) + (currentVelocity * timeElapsed);
-  
-  //Need to derive/check this thing again -> Do later
-  //But what this is doing is checking the distance we need to deccelerate (with what's possible)
-  distanceToDeccelerate = (std::pow(currentVelocity, 2)/(2*maxAcc));
+  if(currentPosition < positionTotal) {
+    double timeElapsed = frc::Timer::GetFPGATimestamp() - prevTime;
+
+  distanceToDeccelerate = (3*currentVelocity*currentVelocity)/(2*maxAcc);
   
   //If the amount of distance we have is less than distance to deccelerate, reduce velocity, by the most possible
   if(distanceToDeccelerate > positionTotal - currentPosition) {
       //I'm pretty sure once we get to the point, the robot will completely just start going backwards or whatever
       //what do I do to make it stop, or am I already handling that -> I think I am but just make sure
       currentVelocity -= (maxAcc * timeElapsed);
-  } 
-  else {
+  } else {
     //Else increase velocity
       currentVelocity += (maxAcc * timeElapsed);
       if(currentVelocity > maxVelocity) {
@@ -74,26 +79,18 @@ void Robot::AutonomousPeriodic() {
       }
   //update the current position using velocity
   //Could do encoders, but manual is pretty good
+  }
+
+  //Wouldn't this just always be positive
   currentPosition += currentVelocity * timeElapsed;
-  }
 
-  //d = vt
-  //We want to go in small intervals so we are only going this distance each time until we stop going
-  //double setPos = currentVelocity * timeElapsed;
-
-  if(currentPosition < positionTotal) {
-    m_leftLeadMotor->GetPIDController().SetReference(-(Robot::convertDistanceToRots(currentPosition)), rev::ControlType::kPosition);
-    m_rightLeadMotor->GetPIDController().SetReference((Robot::convertDistanceToRots(currentPosition)) , rev::ControlType::kPosition);
-  }
-
-    //I know that it will always go a little above the feetNeeded, Ill fix it later
-
-      
+    //in rotations
+    m_leftLeadMotor->GetPIDController().SetReference(-Robot::convertDistanceToTicks(currentPosition), rev::ControlType::kPosition);
+    m_rightLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToTicks(currentPosition) , rev::ControlType::kPosition);
+      //I know that it will always go a little above the feetNeeded, Ill fix it later
 
   prevTime = frc::Timer::GetFPGATimestamp();
-  
-
-  //I really dont know what to do with PID and whatnot and how to make it go here    
+  }
 }
 
 void Robot::TeleopInit() {}
