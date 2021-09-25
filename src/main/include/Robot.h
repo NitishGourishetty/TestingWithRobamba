@@ -54,7 +54,7 @@ class Robot : public frc::TimedRobot {
   void DisabledPeriodic() override;
   void TestInit() override;
   void TestPeriodic() override;
-  double convertDistanceToRots(double);
+  double convertDistanceToTicks(double);
 
  private:
   frc::SendableChooser<std::string> m_chooser;
@@ -63,18 +63,16 @@ class Robot : public frc::TimedRobot {
   std::string m_autoSelected;
 };
 
-double Robot::convertDistanceToRots(double feet) {
+//actually revolutions
+double Robot::convertDistanceToTicks(double feet) {
   double inches = feet * 12;
   double diameter = 5.7;
   double ticksPerRevolution = 42;
   double wheelCircumference = M_PI*diameter;
   // return (inches/wheelCircumference) * ticksPerRevolution;
   //fix
-  //don't need * 42, just rotations
-  //double ticksNeeded = inches / wheelCircumference * 42 
-  //double rots = inches / wheelCircumference 
-
-  return ((inches*(ticksPerRevolution/wheelCircumference))/ticksPerRevolution)*(wheelCircumference);
+  //gearbox ratio
+  return inches*wheelCircumference/(14/50*(24/40));
 }
 
 
