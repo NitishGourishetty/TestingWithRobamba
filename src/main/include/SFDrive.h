@@ -14,6 +14,8 @@ class SFDrive {
   rev::CANSparkMax* rightLeadMotor = nullptr;
   rev::CANSparkMax* leftFollowMotor = nullptr;
   rev::CANSparkMax* rightFollowMotor = nullptr;
+  const double maxVelocity = 21 * 12 * 42;
+  const double maxAcc = 20 * 12 * 42;
 
   // constructor
   SFDrive(rev::CANSparkMax* leftLeadMotor, rev::CANSparkMax* rightLeadMotor, rev::CANSparkMax* leftFollowMotor, rev::CANSparkMax* rightFollowMotor);
@@ -21,4 +23,6 @@ class SFDrive {
  public:
   // methods
   void ArcadeDrive(double joystickX, double joystickY);
+  //timeout?
+  void PIDDrive(double positionTotal);
 };

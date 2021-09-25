@@ -7,6 +7,8 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <math.h>
 
+//Use name space frc later
+
 
 void Robot::RobotInit() {
   m_leftLeadMotor->SetInverted(true);
@@ -41,65 +43,21 @@ void Robot::AutonomousInit() {
 
   m_leftEncoder.SetPosition(0);
   m_rightEncoder.SetPosition(0);
-
   // 15:1 reduction (assumptions), with a 5.7 Diameter wheel
   m_leftEncoder.SetPositionConversionFactor(14/50*(24/40));
   m_rightEncoder.SetPositionConversionFactor(14/50*(24/40));
-  prevTime = frc::Timer::GetFPGATimestamp();
   currentPosition = 0;
   currentVelocity = 0;
 }
 void Robot::AutonomousPeriodic() {
-  //Does this work or is there a substantial delay in the init call
-  double timeElapsed = frc::Timer::GetFPGATimestamp() - prevTime;
-  //adding on velocity that we accelerated because of the timer
-  currentVelocity = currentVelocity + (maxAcc*timeElapsed); 
-  //currentPosition = ((1/2) * maxAcc * pow(timeElapsed, 2)) + (currentVelocity * timeElapsed);
-  
-  //Need to derive/check this thing again -> Do later
-  //But what this is doing is checking the distance we need to deccelerate (with what's possible)
-  distanceToDeccelerate = (std::pow(currentVelocity, 2)/(2*maxAcc));
-  
-  //If the amount of distance we have is less than distance to deccelerate, reduce velocity, by the most possible
-  if(distanceToDeccelerate > positionTotal - currentPosition) {
-      //I'm pretty sure once we get to the point, the robot will completely just start going backwards or whatever
-      //what do I do to make it stop, or am I already handling that -> I think I am but just make sure
-      currentVelocity -= (maxAcc * timeElapsed);
-  } 
-  else {
-    //Else increase velocity
-      currentVelocity += (maxAcc * timeElapsed);
-      if(currentVelocity > maxVelocity) {
-        currentVelocity = maxVelocity;
-      }
-  //update the current position using velocity
-  //Could do encoders, but manual is pretty good
-  currentPosition += currentVelocity * timeElapsed;
-  }
-
-  //d = vt
-  //We want to go in small intervals so we are only going this distance each time until we stop going
-  double setPos = currentVelocity * timeElapsed;
-
-  if(currentPosition < positionTotal) {
-    m_leftLeadMotor->GetPIDController().SetReference(-Robot::convertDistanceToRots(Robot::convertDistanceToRots(setPos)), rev::ControlType::kPosition);
-    m_rightLeadMotor->GetPIDController().SetReference(Robot::convertDistanceToRots(Robot::convertDistanceToRots(setPos)) , rev::ControlType::kPosition);
-  }
-
-    //I know that it will always go a little above the feetNeeded, Ill fix it later
-
-      
-
-  prevTime = frc::Timer::GetFPGATimestamp();
   
 
-  //I really dont know what to do with PID and whatnot and how to make it go here    
 }
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
   // suggest putting this code into one single method in a new file b/c it's very messy for TeleopPeriodic
-
+  //NEGATION WIDE
   joystickY = -stick->GetRawAxis(1); // negate Axis 1, not Axis 4
   joystickX = stick->GetRawAxis(4);
   m_robotDrive->ArcadeDrive(joystickX, joystickY);
