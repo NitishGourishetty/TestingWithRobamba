@@ -13,6 +13,28 @@ SFDrive::SFDrive(rev::CANSparkMax *leftLeadMotor, rev::CANSparkMax *rightLeadMot
                  rev::CANSparkMax *leftFollowMotor, rev::CANSparkMax *rightFollowMotor) : leftLeadMotor{leftLeadMotor}, rightLeadMotor{rightLeadMotor},
                                                                                           leftFollowMotor{leftFollowMotor}, rightFollowMotor{rightFollowMotor} {}
 
+
+void SFDrive::autoInit() {
+  //can I set p here and it works for everything or nah
+  double m_P = 0.5, m_I = 0, m_D = 0.3, kMaxOutput = 0.25, kMinOutput = -0.25;
+  
+  //Set feet here
+  leftLeadMotor->GetPIDController().SetP(m_P);
+  leftLeadMotor->GetPIDController().SetI(m_I);
+  leftLeadMotor->GetPIDController().SetD(m_D);
+  leftLeadMotor->GetPIDController().SetOutputRange(kMinOutput, kMaxOutput);
+
+  rightLeadMotor->GetPIDController().SetP(m_P);
+  rightLeadMotor->GetPIDController().SetI(m_I);
+  rightLeadMotor->GetPIDController().SetD(m_D);
+  rightLeadMotor->GetPIDController().SetOutputRange(kMinOutput, kMaxOutput);
+
+  //m_leftEncoder.SetPosition(0);
+  //m_rightEncoder.SetPosition(0);
+  // 15:1 reduction (assumptions), with a 5.7 Diameter wheel
+  //m_leftEncoder.SetPositionConversionFactor(14/50*(24/40));
+  //m_rightEncoder.SetPositionConversionFactor(14/50*(24/40));
+}
 void SFDrive::ArcadeDrive(double joystickX, double joystickY)
 {
   double afterLeftDeadband;
@@ -63,6 +85,7 @@ void SFDrive::ArcadeDrive(double joystickX, double joystickY)
 
 void SFDrive::PIDDrive(double positionTotal)
 {
+  SFDrive::autoInit();
   double currentPosition = 0;
   double currentVelocity, distanceToDeccelerate, deltaTime;
 

@@ -28,30 +28,10 @@ void Robot::RobotPeriodic() {
 }
 
 void Robot::AutonomousInit() {
-  double m_P = 0.5, m_I = 0, m_D = 0.3, kMaxOutput = 0.25, kMinOutput = -0.25;
   
-  //Set feet here
-  m_leftLeadMotor->GetPIDController().SetP(m_P);
-  m_leftLeadMotor->GetPIDController().SetI(m_I);
-  m_leftLeadMotor->GetPIDController().SetD(m_D);
-  m_leftLeadMotor->GetPIDController().SetOutputRange(kMinOutput, kMaxOutput);
-
-  m_rightLeadMotor->GetPIDController().SetP(m_P);
-  m_rightLeadMotor->GetPIDController().SetI(m_I);
-  m_rightLeadMotor->GetPIDController().SetD(m_D);
-  m_rightLeadMotor->GetPIDController().SetOutputRange(kMinOutput, kMaxOutput);
-
-  m_leftEncoder.SetPosition(0);
-  m_rightEncoder.SetPosition(0);
-  // 15:1 reduction (assumptions), with a 5.7 Diameter wheel
-  m_leftEncoder.SetPositionConversionFactor(14/50*(24/40));
-  m_rightEncoder.SetPositionConversionFactor(14/50*(24/40));
-  currentPosition = 0;
-  currentVelocity = 0;
 }
 void Robot::AutonomousPeriodic() {
-  
-
+  SFDrive::PIDDrive(72);
 }
 
 void Robot::TeleopInit() {}

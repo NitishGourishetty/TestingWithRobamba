@@ -25,4 +25,5 @@ class SFDrive {
   void ArcadeDrive(double joystickX, double joystickY);
   //timeout?
   void PIDDrive(double positionTotal);
+  void autoInit();
 };
