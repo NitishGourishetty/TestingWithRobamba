@@ -31,7 +31,7 @@ void Robot::AutonomousInit() {
   
 }
 void Robot::AutonomousPeriodic() {
-  SFDrive::PIDDrive(72);
+  m_robotDrive->PIDDrive(72);
 }
 
 void Robot::TeleopInit() {}
